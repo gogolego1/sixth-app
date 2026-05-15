@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6학년 1학기 수학 5단원 비율그래프</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container" id="worksheet">
+    <header>
+      <h1>6학년 1학기 수학 5단원 비율그래프</h1>
+      <p class="subtitle">표를 완성하고 원그래프로 나타내어 봅시다.</p>
+    </header>
+
+    <section class="card">
+      <h2>1번 문제</h2>
+
+      <div class="title-input-wrap">
+        <label for="title-q1">1번 문제 제목</label>
+        <input
+          type="text"
+          id="title-q1"
+          class="title-input"
+          placeholder="예: 지난 한 달간 나의 기분 조사"
+        />
+      </div>
+
+      <p>
+        자신의 기록을 바탕으로 감정별 수를 표에 적고, 전체에 대한 비율을 정수 백분율로 나타내세요.
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>항목</th>
+              <th>기쁨</th>
+              <th>슬픔</th>
+              <th>힘듦</th>
+              <th>즐거운</th>
+              <th>두려움</th>
+              <th>계</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th>수</th>
+              <td><input type="number" min="0" id="count-joy" /></td>
+              <td><input type="number" min="0" id="count-sad" /></td>
+              <td><input type="number" min="0" id="count-hard" /></td>
+              <td><input type="number" min="0" id="count-fun" /></td>
+              <td><input type="number" min="0" id="count-fear" /></td>
+              <td><input type="number" id="count-total" readonly /></td>
+            </tr>
+            <tr>
+              <th>비율(%)</th>
+              <td><input type="number" min="0" max="100" id="ratio-joy" /></td>
+              <td><input type="number" min="0" max="100" id="ratio-sad" /></td>
+              <td><input type="number" min="0" max="100" id="ratio-hard" /></td>
+              <td><input type="number" min="0" max="100" id="ratio-fun" /></td>
+              <td><input type="number" min="0" max="100" id="ratio-fear" /></td>
+              <td><input type="number" id="ratio-total" readonly /></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p id="q1-live" class="hint">수를 입력하면 합계가 자동으로 계산됩니다.</p>
+      <p class="hint">비율은 정수 백분율로 입력하세요. 예: 33, 25, 17</p>
+    </section>
+
+    <section class="card">
+      <h2>2번 문제</h2>
+
+      <div class="title-input-wrap">
+        <label for="title-q2">2번 문제 제목</label>
+        <input
+          type="text"
+          id="title-q2"
+          class="title-input"
+          placeholder="예: 나의 기분 비율 원그래프"
+        />
+      </div>
+
+      <p>1번 표를 보고 원그래프를 알맞게 완성하세요.</p>
+      <p class="hint">
+        아래에서 감정을 선택한 뒤, 원의 조각을 눌러 색칠하세요. 조각 1개는 1%입니다.
+      </p>
+
+      <div class="legend" id="legend">
+        <button class="legend-btn active" data-emotion="joy" style="--c:#facc15;">기쁨</button>
+        <button class="legend-btn" data-emotion="sad" style="--c:#60a5fa;">슬픔</button>
+        <button class="legend-btn" data-emotion="hard" style="--c:#9ca3af;">힘듦</button>
+        <button class="legend-btn" data-emotion="fun" style="--c:#34d399;">즐거운</button>
+        <button class="legend-btn" data-emotion="fear" style="--c:#a78bfa;">두려움</button>
+        <button class="legend-btn erase" data-emotion="erase">지우개</button>
+      </div>
+
+      <div class="pie-info">
+        <span id="selected-emotion">현재 선택: 기쁨</span>
+        <span id="painted-count">색칠한 조각: 0 / 100</span>
+      </div>
+
+      <div class="pie-area">
+        <svg id="pieChart" viewBox="0 0 420 420" aria-label="100조각 원그래프"></svg>
+      </div>
+
+      <div class="graph-summary">
+        <div class="summary-item"><span class="dot joy"></span>기쁨: <strong id="paint-joy">0</strong>조각</div>
+        <div class="summary-item"><span class="dot sad"></span>슬픔: <strong id="paint-sad">0</strong>조각</div>
+        <div class="summary-item"><span class="dot hard"></span>힘듦: <strong id="paint-hard">0</strong>조각</div>
+        <div class="summary-item"><span class="dot fun"></span>즐거운: <strong id="paint-fun">0</strong>조각</div>
+        <div class="summary-item"><span class="dot fear"></span>두려움: <strong id="paint-fear">0</strong>조각</div>
+      </div>
+    </section>
+
+    <section class="card actions no-capture">
+      <button id="gradeBtn" class="primary">채점하기</button>
+      <button id="resetBtn" class="secondary">다시하기</button>
+      <button id="downloadBtn" class="download">활동지 이미지 다운로드</button>
+    </section>
+
+    <section class="card result">
+      <h2>채점 결과</h2>
+      <div id="resultBox">
+        <p>아직 채점하지 않았습니다.</p>
+      </div>
+    </section>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
