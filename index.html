@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>해상풍력발전 단지 건설 설문조사 비율그래프</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+    :root {
+      --agree:    #3b82f6;
+      --dontknow: #f59e0b;
+      --disagree: #ef4444;
+      --bg:       #f0f6ff;
+      --card:     #ffffff;
+      --border:   #dbeafe;
+      --text:     #1e3a5f;
+      --sub:      #64748b;
+      --radius:   16px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* ── 헤더 ── */
+    header {
+      background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%);
+      border-radius: var(--radius);
+      padding: 28px 28px 24px;
+      margin-bottom: 20px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: "🌊";
+      position: absolute;
+      right: 24px; top: 16px;
+      font-size: 52px;
+      opacity: .18;
+    }
+    header .tag {
+      display: inline-block;
+      background: rgba(255,255,255,.22);
+      border-radius: 20px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      margin-bottom: 10px;
+    }
+    header h1 {
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+    header p {
+      font-size: 13px;
+      opacity: .85;
+    }
+
+    /* ── 카드 ── */
+    .card {
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1e40af;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card h2 .num {
+      background: #1e40af;
+      color: #fff;
+      border-radius: 8px;
+      width: 26px; height: 26px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    /* ── 설명 텍스트 ── */
+    .desc {
+      font-size: 13.5px;
+      color: var(--sub);
+      line-height: 1.7;
+      margin-bottom: 16px;
+      background: #f8faff;
+      border-left: 3px solid #3b82f6;
+      padding: 10px 14px;
+      border-radius: 0 8px 8px 0;
+    }
+
+
+
+    /* ── 표 ── */
+    .table-wrap { overflow-x: auto; margin-bottom: 12px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      border: 1.5px solid #dbeafe;
+      padding: 10px 8px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    thead th {
+      background: #eff6ff;
+      font-weight: 700;
+      font-size: 13px;
+    }
+    thead th.agree    { color: var(--agree); }
+    thead th.dontknow { color: var(--dontknow); }
+    thead th.disagree { color: var(--disagree); }
+    tbody th {
+      background: #f8faff;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+    td input[type="number"] {
+      width: 72px;
+      padding: 6px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: inherit;
+      text-align: center;
+      outline: none;
+      transition: border-color .2s;
+    }
+    td input[type="number"]:focus { border-color: #3b82f6; }
+    .hint {
+      font-size: 12px;
+      color: var(--sub);
+      margin-top: 6px;
+      line-height: 1.6;
+    }
+    #q1-live {
+      font-size: 13px;
+      color: #0ea5e9;
+      font-weight: 500;
+      margin-top: 8px;
+    }
+
+    /* ── 원그래프 영역 ── */
+    .legend {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .legend-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 2px solid transparent;
+      background: #f1f5f9;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .legend-btn::before {
+      content: '';
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--c);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .legend-btn.active {
+      border-color: var(--c);
+      background: #fff;
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 20%, transparent);
+    }
+    .legend-btn.erase::before { background: #e2e8f0; }
+    .legend-btn.erase.active { border-color: #94a3b8; box-shadow: 0 0 0 3px #e2e8f040; }
+
+    .pie-info {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: var(--sub);
+      font-weight: 500;
+    }
+    #selected-emotion { color: #1e40af; font-weight: 700; }
+
+    .pie-area {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    #pieChart {
+      width: 100%;
+      max-width: 340px;
+      height: auto;
+    }
+
+    .graph-summary {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 4px;
+    }
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .dot.agree    { background: var(--agree); }
+    .dot.dontknow { background: var(--dontknow); }
+    .dot.disagree { background: var(--disagree); }
+
+    /* ── 버튼 ── */
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button.primary, button.secondary, button.download {
+      padding: 12px 20px;
+      border-radius: 10px;
+      border: none;
+      font-size: 14px;
+      font-family: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .15s;
+      flex: 1;
+      min-width: 120px;
+    }
+    button.primary  { background: #1e40af; color: #fff; }
+    button.primary:hover  { background: #1e3a8a; }
+    button.secondary { background: #e2e8f0; color: var(--text); }
+    button.secondary:hover { background: #cbd5e1; }
+    button.download { background: #0ea5e9; color: #fff; }
+    button.download:hover { background: #0284c7; }
+
+    /* ── 결과 ── */
+    .result { }
+    .result h2 { margin-bottom: 12px; }
+    #resultBox {
+      font-size: 14px;
+      line-height: 1.9;
+      color: var(--text);
+    }
+    .result-ok   { color: #16a34a; font-weight: 700; }
+    .result-warn { color: #dc2626; font-weight: 700; }
+    .result-item { margin-bottom: 4px; }
+
+    /* ── 반응형 ── */
+    @media (max-width: 480px) {
+      .actions { flex-direction: column; }
+      button.primary, button.secondary, button.download { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+<div class="container" id="worksheet">
+
+  <header>
+    <div class="tag">6학년 1학기 수학 5단원 · 비율그래프</div>
+    <h1>해상풍력발전 단지 건설<br>설문조사 원그래프</h1>
+    <p>표를 완성하고 원그래프로 나타내어 봅시다.</p>
+  </header>
+
+  <!-- 1번 문제 -->
+  <section class="card">
+    <h2><span class="num">1</span> 설문조사 결과를 표로 정리하기</h2>
+
+    <div class="desc">
+      전교생 설문조사 결과를 보고, 찬성·잘 모르겠다·반대의 수를 표에 입력하세요.<br>
+      전체 인원 수를 먼저 입력하면 합계가 자동으로 확인됩니다.
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>항목</th>
+            <th class="agree">찬성</th>
+            <th class="dontknow">잘 모르겠다</th>
+            <th class="disagree">반대</th>
+            <th>계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>수 (명)</th>
+            <td><input type="number" min="0" id="count-agree" placeholder="0" /></td>
+            <td><input type="number" min="0" id="count-dontknow" placeholder="0" /></td>
+            <td><input type="number" min="0" id="count-disagree" placeholder="0" /></td>
+            <td><input type="number" id="count-total" placeholder="0" /></td>
+          </tr>
+          <tr>
+            <th>비율 (%)</th>
+            <td><input type="number" min="0" max="100" id="ratio-agree" placeholder="0" /></td>
+            <td><input type="number" min="0" max="100" id="ratio-dontknow" placeholder="0" /></td>
+            <td><input type="number" min="0" max="100" id="ratio-disagree" placeholder="0" /></td>
+            <td><input type="number" id="ratio-total" placeholder="0" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="hint">비율은 정수 백분율로 입력하세요. 예: 45, 20, 35</p>
+    <p class="hint">※ 백분율의 합계가 반드시 100%가 되도록 조정하세요.</p>
+  </section>
+
+  <!-- 2번 문제 -->
+  <section class="card">
+    <h2><span class="num">2</span> 원그래프로 나타내기</h2>
+
+    <div class="desc">
+      1번 표를 보고 원그래프를 완성하세요.<br>
+      아래에서 항목을 선택한 뒤, 원의 조각을 눌러 색칠하세요. <strong>조각 1개 = 1%</strong>입니다.
+    </div>
+
+    <div class="legend" id="legend">
+      <button class="legend-btn active" data-emotion="agree"    style="--c:#3b82f6;">찬성</button>
+      <button class="legend-btn"        data-emotion="dontknow" style="--c:#f59e0b;">잘 모르겠다</button>
+      <button class="legend-btn"        data-emotion="disagree" style="--c:#ef4444;">반대</button>
+      <button class="legend-btn erase"  data-emotion="erase">지우개</button>
+    </div>
+
+    <div class="pie-info">
+      <span id="selected-emotion">현재 선택: 찬성</span>
+      <span id="painted-count">색칠한 조각: 0 / 100</span>
+    </div>
+
+    <div class="pie-area">
+      <svg id="pieChart" viewBox="0 0 420 420" aria-label="100조각 원그래프"></svg>
+    </div>
+
+    <div class="graph-summary">
+      <div class="summary-item"><span class="dot agree"></span>찬성: <strong id="paint-agree">0</strong>조각</div>
+      <div class="summary-item"><span class="dot dontknow"></span>잘 모르겠다: <strong id="paint-dontknow">0</strong>조각</div>
+      <div class="summary-item"><span class="dot disagree"></span>반대: <strong id="paint-disagree">0</strong>조각</div>
+    </div>
+  </section>
+
+  <!-- 버튼 -->
+  <section class="card actions no-capture">
+    <button id="gradeBtn"    class="primary">채점하기</button>
+    <button id="resetBtn"    class="secondary">다시하기</button>
+    <button id="downloadBtn" class="download">활동지 저장</button>
+  </section>
+
+  <!-- 결과 -->
+  <section class="card result">
+    <h2><span class="num" style="background:#16a34a;">✓</span> 채점 결과</h2>
+    <div id="resultBox">
+      <p style="color:var(--sub);">아직 채점하지 않았습니다.</p>
+    </div>
+  </section>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+// ── 상수 ──────────────────────────────────────────────────
+const EMOTIONS = [
+  { key: 'agree',    label: '찬성',       color: '#3b82f6' },
+  { key: 'dontknow', label: '잘 모르겠다', color: '#f59e0b' },
+  { key: 'disagree', label: '반대',       color: '#ef4444' },
+];
+const SLICES = 100;
+const CX = 210, CY = 210, R = 180, INNER = 0;
+
+// ── 상태 ──────────────────────────────────────────────────
+let sliceColors = new Array(SLICES).fill(null); // null = 미칠
+let currentEmotion = 'agree';
+let isDragging = false;
+
+// ── SVG 원그래프 생성 ─────────────────────────────────────
+const svg = document.getElementById('pieChart');
+
+function polarToXY(angleDeg, r) {
+  const rad = (angleDeg - 90) * Math.PI / 180;
+  return { x: CX + r * Math.cos(rad), y: CY + r * Math.sin(rad) };
+}
+
+function buildSlices() {
+  svg.innerHTML = '';
+  const degEach = 360 / SLICES;
+
+  // 눈금선 레이어 (나중에 위에 그려지게)
+  const gridGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+  for (let i = 0; i < SLICES; i++) {
+    const startDeg = i * degEach;
+    const endDeg   = startDeg + degEach;
+    const p1 = polarToXY(startDeg, R);
+    const p2 = polarToXY(endDeg,   R);
+    const c1 = polarToXY(startDeg, INNER || 1);
+    const c2 = polarToXY(endDeg,   INNER || 1);
+
+    const largeArc = degEach > 180 ? 1 : 0;
+    let d;
+    if (INNER > 0) {
+      d = `M ${p1.x} ${p1.y} A ${R} ${R} 0 ${largeArc} 1 ${p2.x} ${p2.y}
+           L ${c2.x} ${c2.y} A ${INNER} ${INNER} 0 ${largeArc} 0 ${c1.x} ${c1.y} Z`;
+    } else {
+      d = `M ${CX} ${CY} L ${p1.x} ${p1.y} A ${R} ${R} 0 ${largeArc} 1 ${p2.x} ${p2.y} Z`;
+    }
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('data-idx', i);
+    path.setAttribute('fill', sliceColors[i] || '#f1f5f9');
+    path.setAttribute('stroke', '#e2e8f0');
+    path.setAttribute('stroke-width', '0.8');
+    path.style.cursor = 'pointer';
+    path.style.transition = 'opacity .1s';
+
+    path.addEventListener('mouseenter', () => { if (isDragging) paintSlice(i); });
+    path.addEventListener('mousedown',  () => { isDragging = true; paintSlice(i); });
+    path.addEventListener('click',      () => paintSlice(i));
+
+    // 터치
+    path.addEventListener('touchstart', e => { e.preventDefault(); isDragging = true; paintSlice(i); }, { passive: false });
+    path.addEventListener('touchmove',  e => {
+      e.preventDefault();
+      const t = e.touches[0];
+      const el = document.elementFromPoint(t.clientX, t.clientY);
+      if (el && el.dataset.idx !== undefined) paintSlice(+el.dataset.idx);
+    }, { passive: false });
+
+    svg.appendChild(path);
+  }
+
+  // 10% 눈금선만 (레이블 없음)
+  for (let i = 0; i < SLICES; i += 10) {
+    const deg = i * degEach;
+    const inner = polarToXY(deg, R * 0.82);
+    const outer = polarToXY(deg, R + 2);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', inner.x); line.setAttribute('y1', inner.y);
+    line.setAttribute('x2', outer.x); line.setAttribute('y2', outer.y);
+    line.setAttribute('stroke', '#94a3b8');
+    line.setAttribute('stroke-width', '1.5');
+    line.setAttribute('pointer-events', 'none');
+    svg.appendChild(line);
+  }
+
+  // 외곽선
+  const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  circle.setAttribute('cx', CX); circle.setAttribute('cy', CY); circle.setAttribute('r', R);
+  circle.setAttribute('fill', 'none');
+  circle.setAttribute('stroke', '#94a3b8');
+  circle.setAttribute('stroke-width', '2');
+  circle.setAttribute('pointer-events', 'none');
+  svg.appendChild(circle);
+
+  updateSummary();
+}
+
+document.addEventListener('mouseup',  () => isDragging = false);
+document.addEventListener('touchend', () => isDragging = false);
+
+function paintSlice(idx) {
+  if (currentEmotion === 'erase') {
+    sliceColors[idx] = null;
+  } else {
+    const em = EMOTIONS.find(e => e.key === currentEmotion);
+    sliceColors[idx] = em ? em.color : null;
+  }
+  const paths = svg.querySelectorAll('path');
+  paths[idx].setAttribute('fill', sliceColors[idx] || '#f1f5f9');
+  updateSummary();
+}
+
+function updateSummary() {
+  const counts = {};
+  EMOTIONS.forEach(e => counts[e.key] = 0);
+  let painted = 0;
+  sliceColors.forEach(c => {
+    if (c) {
+      painted++;
+      const em = EMOTIONS.find(e => e.color === c);
+      if (em) counts[em.key]++;
+    }
+  });
+  document.getElementById('painted-count').textContent = `색칠한 조각: ${painted} / 100`;
+  EMOTIONS.forEach(e => {
+    document.getElementById(`paint-${e.key}`).textContent = counts[e.key];
+  });
+}
+
+// ── 범례 버튼 ─────────────────────────────────────────────
+document.getElementById('legend').addEventListener('click', e => {
+  const btn = e.target.closest('.legend-btn');
+  if (!btn) return;
+  document.querySelectorAll('.legend-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentEmotion = btn.dataset.emotion;
+  const em = EMOTIONS.find(e => e.key === currentEmotion);
+  document.getElementById('selected-emotion').textContent =
+    em ? `현재 선택: ${em.label}` : '현재 선택: 지우개';
+});
+
+// ── 표: 합계칸은 학생이 직접 입력 (readonly 해제는 HTML에서 처리)
+const countIds = ['agree', 'dontknow', 'disagree'];
+
+// ── 채점 ─────────────────────────────────────────────────
+document.getElementById('gradeBtn').addEventListener('click', () => {
+  const box = document.getElementById('resultBox');
+
+  // 표 합계 검사
+  let ratioSum = 0;
+  const ratios = {};
+  countIds.forEach(k => {
+    const r = parseInt(document.getElementById(`ratio-${k}`).value) || 0;
+    ratioSum += r;
+    ratios[k] = r;
+  });
+
+  // 그래프 조각 수
+  const painted = {};
+  EMOTIONS.forEach(e => painted[e.key] = 0);
+  sliceColors.forEach(c => {
+    const em = EMOTIONS.find(e => e.color === c);
+    if (em) painted[em.key]++;
+  });
+
+  let html = '';
+  let allOk = true;
+
+  // ① 비율 합계
+  if (ratioSum === 100) {
+    html += `<p class="result-item result-ok">✅ 비율 합계: ${ratioSum}% (정확합니다!)</p>`;
+  } else {
+    html += `<p class="result-item result-warn">❌ 비율 합계: ${ratioSum}% (100%가 되어야 합니다)</p>`;
+    allOk = false;
+  }
+
+  // ② 원그래프 조각 수 일치 여부
+  EMOTIONS.forEach(e => {
+    const expected = ratios[e.key];
+    const actual   = painted[e.key];
+    if (expected === actual) {
+      html += `<p class="result-item result-ok">✅ ${e.label}: ${actual}조각 (${expected}%와 일치!)</p>`;
+    } else if (expected === 0 && actual === 0) {
+      // 둘 다 0이면 패스
+    } else {
+      html += `<p class="result-item result-warn">❌ ${e.label}: ${actual}조각 색칠 (${expected}%이므로 ${expected}조각 필요)</p>`;
+      allOk = false;
+    }
+  });
+
+  if (allOk && ratioSum === 100) {
+    html = `<p style="font-size:16px;font-weight:900;color:#16a34a;margin-bottom:8px;">🎉 완벽합니다!</p>` + html;
+  }
+
+  box.innerHTML = html || '<p>항목을 입력하고 다시 채점해 보세요.</p>';
+});
+
+// ── 다시하기 ──────────────────────────────────────────────
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if (!confirm('모든 입력과 그래프를 초기화할까요?')) return;
+  ['agree','dontknow','disagree'].forEach(k => {
+    document.getElementById(`count-${k}`).value = '';
+    document.getElementById(`ratio-${k}`).value = '';
+  });
+  document.getElementById('count-total').value = '';
+  document.getElementById('ratio-total').value = '';
+  sliceColors = new Array(SLICES).fill(null);
+  buildSlices();
+  document.getElementById('resultBox').innerHTML = '<p style="color:var(--sub);">아직 채점하지 않았습니다.</p>';
+});
+
+// ── 저장 ─────────────────────────────────────────────────
+document.getElementById('downloadBtn').addEventListener('click', () => {
+  document.querySelectorAll('.no-capture').forEach(el => el.style.display = 'none');
+  html2canvas(document.getElementById('worksheet'), { scale: 2, useCORS: true }).then(canvas => {
+    const a = document.createElement('a');
+    a.download = '해상풍력발전_비율그래프_활동지.png';
+    a.href = canvas.toDataURL('image/png');
+    a.click();
+    document.querySelectorAll('.no-capture').forEach(el => el.style.display = '');
+  });
+});
+
+// ── 초기화 ───────────────────────────────────────────────
+buildSlices();
+</script>
+</body>
+</html>
